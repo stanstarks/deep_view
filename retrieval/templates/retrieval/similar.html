@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Deep View Image Retrieval</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="{% static "retrieval/css/style.css"  %}">
+</head>
+<body>
+<div class="container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page_id > 1 %} 
+            <li>
+              <a href="/retrieval/{{ model_name }}/{{ page_id|add:"-1" }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for page_num in page_range %}
+                {% if page_num == page_id %}
+                    <li class="active"><a href="/retrieval/{{ model_name }}/{{ page_num }}"> {{ page_num }}</a></li>
+                {% else %}
+                    <li><a href="/retrieval/{{ model_name }}/{{ page_num }}"> {{ page_num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            <li>
+              <a href="/retrieval/{{ model_name }}/{{ page_id|add:"1" }}"" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+        </ul>
+    </nav>
+    {% for data_row in data_lists %}
+    <div class="row">
+        <div class="col-md-3">
+            <div class="image-block">
+                <div class="img-container">
+                    <img src="{% static data_row.query.name %}" alt="Not Found" class="img-responsive">
+                </div>
+                <div class="text-container">
+                <div>label: {{ data_row.query.label }}</div>
+                <div>predit: {{ data_row.query.predict }}</div>
+                <div class="img-name">name: {{ data_row.query.name }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            {% for elem in data_row.results %}
+            {% if elem.0|divisibleby:"4"  %}
+            <div class="row">
+            {% endif %}
+                <div class="col-md-3">
+                    <div class="image-block">
+                        <div class="img-container">
+                            <img src="{% static elem.1.name %}" alt="Not Found" class="img-responsive">
+                        </div>
+                        <div class="text-container">
+                        <div>label: {{ elem.1.label }}</div>
+                        <div>predit: {{ elem.1.predict }}</div>
+                        <div class="img-name">name: {{ elem.1.name }}</div>
+                        </div>
+                    </div>
+                </div>
+            {% if elem.0|add:"1"|divisibleby:"4"  %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page_id > 1 %} 
+            <li>
+              <a href="/retrieval/{{ model_name }}/{{ page_id|add:"-1" }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for page_num in page_range %}
+                {% if page_num == page_id %}
+                    <li class="active"><a href="/retrieval/{{ model_name }}/{{ page_num }}"> {{ page_num }}</a></li>
+                {% else %}
+                    <li><a href="/retrieval/{{ model_name }}/{{ page_num }}"> {{ page_num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            <li>
+              <a href="/retrieval/{{ model_name }}/{{ page_id|add:"1" }}"" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+</body>
+</html>

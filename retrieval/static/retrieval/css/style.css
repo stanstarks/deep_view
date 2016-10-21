@@ -1,0 +1,31 @@
+body {
+    background: #F0F0F0;
+}
+
+img {
+#    max-width: 100%;
+#    height: auto
+#    max-height: 100%;
+#    width: auto;
+}
+
+.img-container {
+#    height: 300px;
+}
+
+.image-block {
+    background: white;
+#    margin-right: 5px;
+    margin-bottom: 10px;
+#    height: 400px; 
+}
+
+.img-name {
+    word-wrap: break-word;      /* IE 5.5-7 */
+    white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    white-space: pre-wrap;      /* current browsers */
+}
+
+.text-container {
+    padding: 5px 3px 5px 5px;
+}
