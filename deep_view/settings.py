@@ -31,6 +31,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     '/home/nisp/data/pornographic/JPEGImages',
+    os.path.join(BASE_DIR, 'res/img')
 ]
 
 ALLOWED_HOSTS = []
@@ -40,7 +41,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'retrieval.apps.RetrievalConfig',
-    'polls.apps.PollsConfig',
+    'annotations.apps.AnnotationsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

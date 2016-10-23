@@ -7,12 +7,20 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import render
 
-data_dir = '/home/nisp/data/pornographic/JPEGImages'
-predicts = np.load('/home/nisp/hzyangxudong/src/'+''+'predicts.npy')
-list_path = '/home/nisp/hzyangxudong/src/test.txt'
+test_dir = os.path.dirname(__file__) + '/test'
+
+# data_dir = '/home/nisp/data/pornographic/JPEGImages'
+data_dir = os.path.join(test_dir, 'img')
+
+# predicts = np.load('/home/nisp/hzyangxudong/src/'+''+'predicts.npy')
+predicts = np.load(test_dir + '/predicts.npy')
+
+# list_path = '/home/nisp/hzyangxudong/src/test.txt'
+list_path = os.path.join(test_dir, 'test.txt')
 files = [line.split(' ')[0] for line in open(list_path).readlines()]
 
-res_path = '/home/nisp/hzyangxudong/src'
+# res_path = '/home/nisp/hzyangxudong/src'
+res_path = test_dir
 model_register = {}
 
 # Create your views here.
@@ -51,7 +59,7 @@ def similar_image(request, model_name, page_id):
         if not ret:
             return HttpResponse("Error resources not found for model " + model_name)
 
-    result_per_query = 8 
+    result_per_query = 8
     wrong_predicts_ind = predicts[0, :] != predicts[1, :]
     sub_inds = model_register[model_name]['sim_inds'][wrong_predicts_ind, :result_per_query+1]
 
@@ -70,12 +78,12 @@ def similar_image(request, model_name, page_id):
             datum = Datum(files[ind], str(predicts[0, ind]), str(predicts[1, ind]))
             data_row['results'].append((itt-1, datum))
         data_lists.append(data_row)
-    
+
     page_range = calc_page_range(page_id, 20)
     context = dict(data_lists=data_lists,
                    model_name=model_name,
                    page_id=page_id,
-                   page_range=page_range) 
+                   page_range=page_range)
     return render(request, 'retrieval/similar.html', context)
 
 def query(request):
