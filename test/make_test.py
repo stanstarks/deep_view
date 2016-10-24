@@ -16,4 +16,4 @@ np.save('predicts.npy', predicts)
 # create 1.txt
 with open('1.txt', 'w') as outfile:
     for i in range(1, 7):
-        outfile.write('%d.png\t1,2,3\n' %i)
+        outfile.write('%d.png\t1,2,3\n' % i)

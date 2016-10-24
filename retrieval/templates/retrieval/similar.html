@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -28,12 +28,20 @@
     <![endif]-->
 
     <link rel="stylesheet" href="{% static "retrieval/css/style.css"  %}">
+
+    <!-- xoxco tags -->
+    <link rel="stylesheet" href="{% static "retrieval/css/jquery.tagsinput.css"  %}">
+    <script type="text/javascript" src="{% static "retrieval/js/jquery.tagsinput.js"  %}"></script>
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js'></script>
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/start/jquery-ui.css" />
+
 </head>
 <body>
+    <a href="/retrieval/export/">export</a>
 <div class="container">
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            {% if page_id > 1 %} 
+            {% if page_id > 1 %}
             <li>
               <a hre
                 <span aria-hidden="true">&laquo;</span>
@@ -64,6 +72,11 @@
                 <div class="text-container">
                 <div>label: {{ data_row.query.label }}</div>
                 <div>predit: {{ data_row.query.predict }}</div>
+                <form action="{% url 'annotations:modify' data_row.query.name %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="label" class="tags" value="{{ data_row.query.rawlabel }}" />
+                    <input type="submit" value="Change" />
+                </form>
                 <div class="img-name">name: {{ data_row.query.name }}</div>
                 </div>
             </div>
@@ -81,6 +94,11 @@
                         <div class="text-container">
                         <div>label: {{ elem.1.label }}</div>
                         <div>predit: {{ elem.1.predict }}</div>
+                        <form action="{% url 'annotations:modify' elem.1.name %}" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="label" class="tags" value="{{ elem.1.rawlabel }}" />
+                            <input type="submit" value="Change" />
+                        </form>
                         <div class="img-name">name: {{ elem.1.name }}</div>
                         </div>
                     </div>
@@ -94,7 +112,7 @@
     {% endfor %}
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            {% if page_id > 1 %} 
+            {% if page_id > 1 %}
             <li>
               <a href="/retrieval/{{ model_name }}/{{ page_id|add:"-1" }}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
@@ -119,4 +137,7 @@
 
 
 </body>
+    <script type="text/javascript">
+         $('.tags').tagsInput({width:'auto', height:'50px', defaultText:''});
+    </script>
 </html>

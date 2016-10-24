@@ -6,8 +6,9 @@ from .models import Datum
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.core.cache import cache
 
-test_dir = os.path.dirname(__file__) + '/test'
+test_dir = os.path.join(os.path.dirname(__file__), os.pardir, 'test')
 
 # data_dir = '/home/nisp/data/pornographic/JPEGImages'
 data_dir = os.path.join(test_dir, 'img')
@@ -21,7 +22,18 @@ files = [line.split(' ')[0] for line in open(list_path).readlines()]
 
 # res_path = '/home/nisp/hzyangxudong/src'
 res_path = test_dir
+
+label_path = test_dir
 model_register = {}
+
+# read raw labels from list files
+setnames = ['1']
+for label_fn in setnames:
+    with open('%s/%s.txt' % (label_path, label_fn)) as label_file:
+        for line in label_file.readlines():
+            image, label = line.strip().split()
+            cachekey = label_fn + '/' + image
+            cache.set(cachekey, label)
 
 # Create your views here.
 def index(request):
@@ -71,11 +83,13 @@ def similar_image(request, model_name, page_id):
     sub_inds = sub_inds[(page_id-1)*count_per_page:page_id*count_per_page, :]
     data_lists = []
     for inds in sub_inds:
-        query_datum = Datum(files[inds[0]], str(predicts[0, inds[0]]), str(predicts[1, inds[0]]))
+        rawlabel = cache.get(files[inds[0]])
+        query_datum = Datum(files[inds[0]], str(predicts[0, inds[0]]), str(predicts[1, inds[0]]), rawlabel)
         data_row = {'query': query_datum, 'results': []}
         for itt in range(1, len(inds)):
             ind  = inds[itt]
-            datum = Datum(files[ind], str(predicts[0, ind]), str(predicts[1, ind]))
+            rawlabel = cache.get(files[ind])
+            datum = Datum(files[ind], str(predicts[0, ind]), str(predicts[1, ind]), rawlabel)
             data_row['results'].append((itt-1, datum))
         data_lists.append(data_row)
 
@@ -91,4 +105,24 @@ def query(request):
 
 def find_similar(request):
     return HttpResponse("")
-    
+
+def export(request):
+    # get all modifications
+    labelmaps = {}
+    for label_fn in setnames:
+        labelmap = {}
+        with open('%s/%s.txt' % (label_path, label_fn)) as label_file:
+            for line in label_file.readlines():
+                image, label = line.strip().split()
+                labelmap[image] = label
+        labelmaps[label_fn] = labelmap
+
+    print labelmaps
+    # write labelmaps to file
+    for setkey in setnames:
+        with open('%s/%s.txt' % (label_path, setkey), 'w') as outfile:
+            for image in labelmaps[setkey]:
+                label = cache.get(setkey + '/' + image)
+                # label = labelmaps[setkey][image]
+                outfile.write(image + '\t' + label + '\n')
+    return HttpResponse("new list files generated")

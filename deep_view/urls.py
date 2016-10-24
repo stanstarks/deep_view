@@ -18,6 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^retrieval/', include('retrieval.urls')),
-    url(r'^annotations/', include('annotations.urls')),
+    url(r'^retrieval/', include('retrieval.urls', namespace="retrieval")),
+    url(r'^annotations/', include('annotations.urls', namespace="annotations")),
 ]
